@@ -9,6 +9,8 @@ pub mod tuning;
 
 use std::marker::PhantomData;
 
+#[cfg(feature = "egui")]
+use bevy::ecs::component::Mutable;
 use bevy::prelude::*;
 #[cfg(feature = "egui")]
 use bevy::window::{PresentMode, PrimaryWindow};
@@ -22,6 +24,7 @@ use bevy_tnua::TnuaToggle;
 
 use self::component_alterbation::CommandAlteringSelectors;
 #[cfg(feature = "egui")]
+#[allow(unused_imports)]
 use self::plotting::{make_update_plot_data_system, plot_source_rolling_update};
 
 use tuning::UiTunable;
@@ -43,10 +46,12 @@ impl<C: Component + UiTunable> Default for DemoUi<C> {
 
 const GRAVITY_MAGNITUDE: Float = 9.81;
 
-impl<C: Component + UiTunable> Plugin for DemoUi<C> {
+impl<C: Component<Mutability = Mutable> + UiTunable> Plugin for DemoUi<C> {
     fn build(&self, app: &mut App) {
         #[cfg(feature = "egui")]
-        app.add_plugins(EguiPlugin);
+        app.add_plugins(EguiPlugin {
+            enable_multipass_for_primary_context: false,
+        });
         app.insert_resource(DemoUiPhysicsBackendSettings {
             active: true,
             gravity: Vector3::NEG_Y * GRAVITY_MAGNITUDE,
@@ -123,7 +128,7 @@ fn apply_selectors(
 
 #[cfg(feature = "egui")]
 #[allow(clippy::type_complexity)]
-fn ui_system<C: Component + UiTunable>(
+fn ui_system<C: Component<Mutability = Mutable> + UiTunable>(
     mut egui_context: EguiContexts,
     mut physics_backend_settings: ResMut<DemoUiPhysicsBackendSettings>,
     mut query: Query<(
@@ -145,7 +150,7 @@ fn ui_system<C: Component + UiTunable>(
 ) {
     use std::any::TypeId;
 
-    let Ok(mut primary_window) = primary_window_query.get_single_mut() else {
+    let Ok(mut primary_window) = primary_window_query.single_mut() else {
         return;
     };
     let mut egui_window = egui::Window::new("Tnua");
@@ -301,6 +306,7 @@ fn ui_system<C: Component + UiTunable>(
     });
 }
 
+#[allow(unused_variables)]
 fn update_physics_active_from_ui(
     setting_from_ui: Res<DemoUiPhysicsBackendSettings>,
     #[cfg(feature = "rapier2d")] mut config_rapier2d: Option<

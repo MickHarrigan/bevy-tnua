@@ -1,9 +1,13 @@
-use bevy::prelude::*;
+use bevy::{
+    ecs::{component::Mutable, schedule::ScheduleConfigs, system::ScheduleSystem},
+    prelude::*,
+};
 use bevy_tnua::math::{AdjustPrecision, Float, Vector3};
 
 pub struct MovingPlatformPlugin;
 
 impl Plugin for MovingPlatformPlugin {
+    #[allow(unused_variables)]
     fn build(&self, app: &mut App) {
         #[cfg(feature = "rapier2d")]
         app.add_systems(
@@ -60,9 +64,10 @@ impl MovingPlatform {
         }
     }
 
-    fn make_system<V: Component>(
+    #[allow(dead_code)]
+    fn make_system<V: Component<Mutability = Mutable>>(
         mut updater: impl 'static + Send + Sync + FnMut(&mut V, Vector3),
-    ) -> bevy::ecs::schedule::SystemConfigs {
+    ) -> ScheduleConfigs<ScheduleSystem> {
         (move |time: Res<Time>,
                mut query: Query<(&mut MovingPlatform, &GlobalTransform, &mut V)>| {
             for (mut moving_platform, transform, mut velocity) in query.iter_mut() {

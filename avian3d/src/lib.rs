@@ -12,7 +12,10 @@ use avian3d::{
     dynamics::rigid_body::mass_properties::components::GlobalAngularInertia, prelude::*,
     schedule::PhysicsStepSet,
 };
-use bevy::ecs::schedule::{InternedScheduleLabel, ScheduleLabel};
+use bevy::ecs::{
+    relationship::Relationship,
+    schedule::{InternedScheduleLabel, ScheduleLabel},
+};
 use bevy::prelude::*;
 use bevy_tnua_physics_integration_layer::math::AsF32;
 use bevy_tnua_physics_integration_layer::math::Float;
@@ -150,7 +153,7 @@ fn update_proximity_sensors_system(
     other_object_query: Query<(
         Option<(&Position, &LinearVelocity, &AngularVelocity)>,
         Option<&CollisionLayers>,
-        Option<&ColliderParent>,
+        Option<&ColliderOf>,
         Has<TnuaGhostPlatform>,
         Has<Sensor>,
         Has<TnuaNotPlatform>,

@@ -232,12 +232,14 @@ fn setup_player(mut commands: Commands) {
                 "Sensor Shape",
                 1,
                 &[
+                    #[allow(unused_mut, unused_variables)]
                     ("Point", |mut cmd| {
                         #[cfg(feature = "rapier2d")]
                         cmd.remove::<TnuaRapier2dSensorShape>();
                         #[cfg(feature = "avian2d")]
                         cmd.remove::<TnuaAvian2dSensorShape>();
                     }),
+                    #[allow(unused_mut, unused_variables)]
                     ("Flat (underfit)", |mut cmd| {
                         #[cfg(feature = "rapier2d")]
                         cmd.insert(TnuaRapier2dSensorShape(rapier::Collider::cuboid(0.49, 0.0)));
@@ -246,12 +248,14 @@ fn setup_player(mut commands: Commands) {
                             0.99, 0.0,
                         )));
                     }),
+                    #[allow(unused_mut, unused_variables)]
                     ("Flat (exact)", |mut cmd| {
                         #[cfg(feature = "rapier2d")]
                         cmd.insert(TnuaRapier2dSensorShape(rapier::Collider::cuboid(0.5, 0.0)));
                         #[cfg(feature = "avian2d")]
                         cmd.insert(TnuaAvian2dSensorShape(avian::Collider::rectangle(1.0, 0.0)));
                     }),
+                    #[allow(unused_mut, unused_variables)]
                     ("flat (overfit)", |mut cmd| {
                         #[cfg(feature = "rapier2d")]
                         cmd.insert(TnuaRapier2dSensorShape(rapier::Collider::cuboid(0.51, 0.0)));
@@ -260,12 +264,14 @@ fn setup_player(mut commands: Commands) {
                             1.01, 0.0,
                         )));
                     }),
+                    #[allow(unused_mut, unused_variables)]
                     ("Ball (underfit)", |mut cmd| {
                         #[cfg(feature = "rapier2d")]
                         cmd.insert(TnuaRapier2dSensorShape(rapier::Collider::ball(0.49)));
                         #[cfg(feature = "avian2d")]
                         cmd.insert(TnuaAvian2dSensorShape(avian::Collider::circle(0.49)));
                     }),
+                    #[allow(unused_mut, unused_variables)]
                     ("Ball (exact)", |mut cmd| {
                         #[cfg(feature = "rapier2d")]
                         cmd.insert(TnuaRapier2dSensorShape(rapier::Collider::ball(0.5)));
@@ -274,25 +280,31 @@ fn setup_player(mut commands: Commands) {
                     }),
                 ],
             )
-            .with_checkbox("Lock Tilt", false, |mut cmd, lock_tilt| {
-                // Tnua will automatically apply angular impulses/forces to fix the tilt and make
-                // the character stand upward, but it is also possible to just let the physics
-                // engine prevent rotation (other than around the Y axis, for turning)
-                if lock_tilt {
-                    #[cfg(feature = "rapier2d")]
-                    cmd.insert(rapier::LockedAxes::ROTATION_LOCKED);
-                    #[cfg(feature = "avian2d")]
-                    cmd.insert(avian::LockedAxes::new().lock_rotation());
-                } else {
-                    #[cfg(feature = "rapier2d")]
-                    cmd.insert(rapier::LockedAxes::empty());
-                    #[cfg(feature = "avian2d")]
-                    cmd.insert(avian::LockedAxes::new());
-                }
-            })
+            .with_checkbox(
+                "Lock Tilt",
+                false,
+                #[allow(unused_mut, unused_variables)]
+                |mut cmd, lock_tilt| {
+                    // Tnua will automatically apply angular impulses/forces to fix the tilt and make
+                    // the character stand upward, but it is also possible to just let the physics
+                    // engine prevent rotation (other than around the Y axis, for turning)
+                    if lock_tilt {
+                        #[cfg(feature = "rapier2d")]
+                        cmd.insert(rapier::LockedAxes::ROTATION_LOCKED);
+                        #[cfg(feature = "avian2d")]
+                        cmd.insert(avian::LockedAxes::new().lock_rotation());
+                    } else {
+                        #[cfg(feature = "rapier2d")]
+                        cmd.insert(rapier::LockedAxes::empty());
+                        #[cfg(feature = "avian2d")]
+                        cmd.insert(avian::LockedAxes::new());
+                    }
+                },
+            )
             .with_checkbox(
                 "Phase Through Collision Groups",
                 true,
+                #[allow(unused_mut, unused_variables)]
                 |mut cmd, use_collision_groups| {
                     #[cfg(feature = "rapier2d")]
                     if use_collision_groups {
@@ -346,14 +358,18 @@ fn setup_player(mut commands: Commands) {
     });
 
     // `TnuaCrouchEnforcer` can be used to prevent the character from standing up when obstructed.
-    cmd.insert(TnuaCrouchEnforcer::new(0.5 * Vector3::Y, |cmd| {
-        // It needs a sensor shape because it needs to do a shapecast upwards. Without a sensor shape
-        // it'd do a raycast.
-        #[cfg(feature = "rapier2d")]
-        cmd.insert(TnuaRapier2dSensorShape(rapier::Collider::cuboid(0.5, 0.0)));
-        #[cfg(feature = "avian2d")]
-        cmd.insert(TnuaAvian2dSensorShape(avian::Collider::rectangle(1.0, 0.0)));
-    }));
+    cmd.insert(TnuaCrouchEnforcer::new(
+        0.5 * Vector3::Y,
+        #[allow(unused_mut, unused_variables)]
+        |cmd| {
+            // It needs a sensor shape because it needs to do a shapecast upwards. Without a sensor shape
+            // it'd do a raycast.
+            #[cfg(feature = "rapier2d")]
+            cmd.insert(TnuaRapier2dSensorShape(rapier::Collider::cuboid(0.5, 0.0)));
+            #[cfg(feature = "avian2d")]
+            cmd.insert(TnuaAvian2dSensorShape(avian::Collider::rectangle(1.0, 0.0)));
+        },
+    ));
 
     // The ghost sensor is used for detecting ghost platforms - platforms configured in the physics
     // backend to not contact with the character (or detect the contact but not apply physical

@@ -1,5 +1,4 @@
-use bevy::prelude::*;
-use bevy::utils::HashMap;
+use bevy::{platform::collections::HashMap, prelude::*};
 use bevy_tnua_physics_integration_layer::obstacle_radar::TnuaObstacleRadar;
 
 use crate::controller::TnuaActionFlowStatus;

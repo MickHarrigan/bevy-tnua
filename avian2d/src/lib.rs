@@ -10,7 +10,10 @@ mod spatial_ext;
 
 use avian2d::math::{AdjustPrecision, AsF32};
 use avian2d::{prelude::*, schedule::PhysicsStepSet};
-use bevy::ecs::schedule::{InternedScheduleLabel, ScheduleLabel};
+use bevy::ecs::{
+    relationship::Relationship,
+    schedule::{InternedScheduleLabel, ScheduleLabel},
+};
 use bevy::prelude::*;
 use bevy_tnua_physics_integration_layer::data_for_backends::{
     TnuaGhostPlatform, TnuaGhostSensor, TnuaGravity, TnuaMotor, TnuaNotPlatform,
@@ -141,7 +144,7 @@ fn update_proximity_sensors_system(
     other_object_query: Query<(
         Option<(&Position, &LinearVelocity, &AngularVelocity)>,
         Option<&CollisionLayers>,
-        Option<&ColliderParent>,
+        Option<&ColliderOf>,
         Has<TnuaGhostPlatform>,
         Has<Sensor>,
         Has<TnuaNotPlatform>,

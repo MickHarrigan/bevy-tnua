@@ -248,12 +248,14 @@ fn setup_player(mut commands: Commands, asset_server: Res<AssetServer>) {
                 "Sensor Shape",
                 1,
                 &[
+                    #[allow(unused_mut, unused_variables)]
                     ("no", |mut cmd| {
                         #[cfg(feature = "rapier3d")]
                         cmd.remove::<TnuaRapier3dSensorShape>();
                         #[cfg(feature = "avian3d")]
                         cmd.remove::<TnuaAvian3dSensorShape>();
                     }),
+                    #[allow(unused_mut, unused_variables)]
                     ("flat (underfit)", |mut cmd| {
                         #[cfg(feature = "rapier3d")]
                         cmd.insert(TnuaRapier3dSensorShape(rapier::Collider::cylinder(
@@ -262,6 +264,7 @@ fn setup_player(mut commands: Commands, asset_server: Res<AssetServer>) {
                         #[cfg(feature = "avian3d")]
                         cmd.insert(TnuaAvian3dSensorShape(avian::Collider::cylinder(0.49, 0.0)));
                     }),
+                    #[allow(unused_mut, unused_variables)]
                     ("flat (exact)", |mut cmd| {
                         #[cfg(feature = "rapier3d")]
                         cmd.insert(TnuaRapier3dSensorShape(rapier::Collider::cylinder(
@@ -270,6 +273,7 @@ fn setup_player(mut commands: Commands, asset_server: Res<AssetServer>) {
                         #[cfg(feature = "avian3d")]
                         cmd.insert(TnuaAvian3dSensorShape(avian::Collider::cylinder(0.5, 0.0)));
                     }),
+                    #[allow(unused_mut, unused_variables)]
                     ("flat (overfit)", |mut cmd| {
                         #[cfg(feature = "rapier3d")]
                         cmd.insert(TnuaRapier3dSensorShape(rapier::Collider::cylinder(
@@ -278,12 +282,14 @@ fn setup_player(mut commands: Commands, asset_server: Res<AssetServer>) {
                         #[cfg(feature = "avian3d")]
                         cmd.insert(TnuaAvian3dSensorShape(avian::Collider::cylinder(0.51, 0.0)));
                     }),
+                    #[allow(unused_mut, unused_variables)]
                     ("ball (underfit)", |mut cmd| {
                         #[cfg(feature = "rapier3d")]
                         cmd.insert(TnuaRapier3dSensorShape(rapier::Collider::ball(0.49)));
                         #[cfg(feature = "avian3d")]
                         cmd.insert(TnuaAvian3dSensorShape(avian::Collider::sphere(0.49)));
                     }),
+                    #[allow(unused_mut, unused_variables)]
                     ("ball (exact)", |mut cmd| {
                         #[cfg(feature = "rapier3d")]
                         cmd.insert(TnuaRapier3dSensorShape(rapier::Collider::ball(0.5)));
@@ -292,28 +298,34 @@ fn setup_player(mut commands: Commands, asset_server: Res<AssetServer>) {
                     }),
                 ],
             )
-            .with_checkbox("Lock Tilt", true, |mut cmd, lock_tilt| {
-                // Tnua will automatically apply angular impulses/forces to fix the tilt and make
-                // the character stand upward, but it is also possible to just let the physics
-                // engine prevent rotation (other than around the Y axis, for turning)
-                if lock_tilt {
-                    #[cfg(feature = "rapier3d")]
-                    cmd.insert(
-                        rapier::LockedAxes::ROTATION_LOCKED_X
-                            | rapier::LockedAxes::ROTATION_LOCKED_Z,
-                    );
-                    #[cfg(feature = "avian3d")]
-                    cmd.insert(avian::LockedAxes::new().lock_rotation_x().lock_rotation_z());
-                } else {
-                    #[cfg(feature = "rapier3d")]
-                    cmd.insert(rapier::LockedAxes::empty());
-                    #[cfg(feature = "avian3d")]
-                    cmd.insert(avian::LockedAxes::new());
-                }
-            })
+            .with_checkbox(
+                "Lock Tilt",
+                true,
+                #[allow(unused_mut, unused_variables)]
+                |mut cmd, lock_tilt| {
+                    // Tnua will automatically apply angular impulses/forces to fix the tilt and make
+                    // the character stand upward, but it is also possible to just let the physics
+                    // engine prevent rotation (other than around the Y axis, for turning)
+                    if lock_tilt {
+                        #[cfg(feature = "rapier3d")]
+                        cmd.insert(
+                            rapier::LockedAxes::ROTATION_LOCKED_X
+                                | rapier::LockedAxes::ROTATION_LOCKED_Z,
+                        );
+                        #[cfg(feature = "avian3d")]
+                        cmd.insert(avian::LockedAxes::new().lock_rotation_x().lock_rotation_z());
+                    } else {
+                        #[cfg(feature = "rapier3d")]
+                        cmd.insert(rapier::LockedAxes::empty());
+                        #[cfg(feature = "avian3d")]
+                        cmd.insert(avian::LockedAxes::new());
+                    }
+                },
+            )
             .with_checkbox(
                 "Phase Through Collision Groups",
                 true,
+                #[allow(unused_mut, unused_variables)]
                 |mut cmd, use_collision_groups| {
                     #[cfg(feature = "rapier3d")]
                     if use_collision_groups {
@@ -365,14 +377,18 @@ fn setup_player(mut commands: Commands, asset_server: Res<AssetServer>) {
     });
 
     // `TnuaCrouchEnforcer` can be used to prevent the character from standing up when obstructed.
-    cmd.insert(TnuaCrouchEnforcer::new(0.5 * Vector3::Y, |cmd| {
-        #[cfg(feature = "rapier3d")]
-        cmd.insert(TnuaRapier3dSensorShape(rapier::Collider::cylinder(
-            0.0, 0.5,
-        )));
-        #[cfg(feature = "avian3d")]
-        cmd.insert(TnuaAvian3dSensorShape(avian::Collider::cylinder(0.5, 0.0)));
-    }));
+    cmd.insert(TnuaCrouchEnforcer::new(
+        0.5 * Vector3::Y,
+        #[allow(unused_mut, unused_variables)]
+        |cmd| {
+            #[cfg(feature = "rapier3d")]
+            cmd.insert(TnuaRapier3dSensorShape(rapier::Collider::cylinder(
+                0.0, 0.5,
+            )));
+            #[cfg(feature = "avian3d")]
+            cmd.insert(TnuaAvian3dSensorShape(avian::Collider::cylinder(0.5, 0.0)));
+        },
+    ));
 
     // The ghost sensor is used for detecting ghost platforms - platforms configured in the physics
     // backend to not contact with the character (or detect the contact but not apply physical
@@ -401,7 +417,7 @@ fn grab_ungrab_mouse(
     keyboard: Res<ButtonInput<KeyCode>>,
     mut primary_window_query: Query<&mut Window, With<PrimaryWindow>>,
 ) {
-    let Ok(mut window) = primary_window_query.get_single_mut() else {
+    let Ok(mut window) = primary_window_query.single_mut() else {
         return;
     };
     if window.cursor_options.visible {
@@ -428,7 +444,7 @@ fn apply_camera_controls(
     mut camera_query: Query<&mut Transform, With<Camera>>,
 ) {
     let mouse_controls_camera = primary_window_query
-        .get_single()
+        .single()
         .is_ok_and(|w| !w.cursor_options.visible);
     let total_delta = if mouse_controls_camera {
         mouse_motion.read().map(|event| event.delta).sum()
@@ -436,7 +452,7 @@ fn apply_camera_controls(
         mouse_motion.clear();
         Vec2::ZERO
     };
-    let Ok((player_transform, mut forward_from_camera)) = player_character_query.get_single_mut()
+    let Ok((player_transform, mut forward_from_camera)) = player_character_query.single_mut()
     else {
         return;
     };
